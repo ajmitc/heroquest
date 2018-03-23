@@ -6,9 +6,11 @@ public enum WeaponType
     STAFF( "Staff", 1, 1, 1, true ),
     SHORTSWORD( "Shortsword", 2, 1, 1 ),
     BROADSWORD( "Broadsword", 3, 1, 1 ),
-    LONGSWORD( "Longsword", 4, 1, 1, true ),
-    BATTLEAXE( "Battleaxe", 5, 1, 1 ),
-    CROSSBOW( "Crossbow", 3, 2, 100, true );
+    LONGSWORD( "Longsword", 3, 1, 1, true ),
+    BATTLEAXE( "Battleaxe", 4, 1, 1 ),
+    CROSSBOW( "Crossbow", 3, 2, 100, true ),
+    // Use this WeaponType for any special weapons found on Artifact cards
+    ARTIFACT( "Artifact", 0, 0, 0 );
 
     private String _name;
     private int _attack;

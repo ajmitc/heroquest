@@ -4,9 +4,14 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.stream.*;
 
 import heroquest.util.Util;
 import heroquest.monster.Monster;
+import heroquest.treasure.Treasure;
+import heroquest.furniture.Furniture;
+import heroquest.furniture.FurnitureFactory;
+import heroquest.furniture.FurnitureType;
 
 public abstract class Quest
 {
@@ -25,6 +30,7 @@ public abstract class Quest
     protected Monster _wanderingMonster;
 
     protected Map<Integer, Note> _notes;
+    protected Map<Integer, List<Treasure>> _treasures; // Map<Room, List<Treasure>>
     
     protected List<Reward> _endGameRewards;
 
@@ -56,14 +62,15 @@ public abstract class Quest
         _roomBoundaries.put( 22, new Integer[]{ 21, 24, 14, 17 } );
     }
 
-    public Quest()
+    public Quest( int num, String name )
     {
-        _number = 0;
-        _name = "";
+        _number = num;
+        _name = name;
         _description = "";
         _board = new ArrayList<>();
         _wanderingMonster = null;
         _notes = new HashMap<>();
+        _treasures = new HashMap<>();
         _endGameRewards = new ArrayList<>();
 
         initBoard();
@@ -206,6 +213,28 @@ public abstract class Quest
         return cells;
     }
 
+    public Cell getCellInDir( Cell fromCell, int dir )
+    {
+        int x = fromCell.getX();
+        int y = fromCell.getY();
+        switch( dir )
+        {
+            case Cell.UP:
+                y -= 1;
+                break;
+            case Cell.RIGHT:
+                x += 1;
+                break;
+            case Cell.DOWN:
+                y += 1;
+                break;
+            case Cell.LEFT:
+                x -= 1;
+                break;
+        }
+        return getCell( x, y );
+    }
+
     public List<Cell> getRoomCells( int room )
     {
         List<Cell> cells = new ArrayList<>();
@@ -254,9 +283,9 @@ public abstract class Quest
     public void setStairsAt( int room, int dx, int dy )
     {
         Cell c = getCellAtOffsetInRoom( room, dx, dy );
-        c.setFurniture( new Stairs() );
-        for( c: getCellsAtOffsetInRoom( room, dx, dx + 1, dy, dy + 1 ) )
-            c.setStairs( true );
+        c.setFurniture( FurnitureFactory.create( FurnitureType.STAIRS ) );
+        for( Cell cell: getCellsAtOffsetInRoom( room, dx, dx + 1, dy, dy + 1 ) )
+            cell.setStairs( true );
     }
 
 
@@ -278,9 +307,22 @@ public abstract class Quest
         cell.setWall( dir, type );
         // get the opposite cell and set the wall there too
         int oppdir = Util.oppositeDir( dir );
-        Cell opp = getCell( oppdir );
+        Cell opp = getCellInDir( cell, oppdir );
         if( opp != null )
             opp.setWall( oppdir, type );
+    }
+
+
+    public void setMonsterAt( int room, int dx, int dy, Monster monster )
+    {
+        Cell c = getCellAtOffsetInRoom( room, dx, dy );
+        c.setMonster( monster );
+    }
+
+    public void setFurnitureAt( int room, int dx, int dy, Furniture furniture )
+    {
+        Cell c = getCellAtOffsetInRoom( room, dx, dy );
+        c.setFurniture( furniture );
     }
 
 
@@ -288,6 +330,29 @@ public abstract class Quest
 
     public Map<Integer, Note> getNotes(){ return _notes; }
     public Note getNote( int room ){ return _notes.get( room ); }
+
+    public Map<Integer, List<Treasure>> getTreasures(){ return _treasures; }
+    public List<Treasure> getTreasure( int room )
+    { 
+        if( !_treasures.containsKey( room ) )
+            _treasures.put( room, new ArrayList<Treasure>() );
+        return _treasures.get( room );
+    }
+
+    public void setSolidRock( int x, int y )
+    {
+        getCell( x, y ).setSolidRock( true );
+    }
+
+    public void setSolidRock( int x0, int y0, int x1, int y1 )
+    {
+        getCells( x0, x1, y0, y1 ).stream().filter( cell -> cell != null ).forEach( cell -> cell.setSolidRock( true ) );
+    }
+
+    public void setSolidRockRoom( int room )
+    {
+        getRoomCells( room ).stream().forEach( cell -> cell.setSolidRock( true ) );
+    }
 
     public List<Reward> getEndGameRewards(){ return _endGameRewards; }
 }

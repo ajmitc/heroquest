@@ -291,7 +291,7 @@ public class Util
     }
 
 
-    public int oppositeDir( int dir )
+    public static int oppositeDir( int dir )
     {
         // 0 -> 2, 1 -> 3, 2 -> 0, 3 -> 1
         return (dir + 2) % 4;

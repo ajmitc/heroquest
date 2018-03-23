@@ -1,2 +1,22 @@
 
 apply plugin: 'java'
+
+repositories {
+   mavenCentral()
+}
+
+dependencies {
+
+}
+
+jar {
+    baseName = "HeroQuest"
+
+    manifest {
+        attributes(
+            "Class-Path": configurations.compile.collect { it.getName() }.join(' '),
+            "Main-Class": "heroquest.Main"
+        )
+    }
+}
+

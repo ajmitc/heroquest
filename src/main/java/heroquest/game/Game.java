@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import heroquest.quest.Quest;
+import heroquest.hero.*;
 
 public class Game
 {

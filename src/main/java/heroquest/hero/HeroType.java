@@ -3,10 +3,10 @@ package heroquest.hero;
 public enum HeroType
 {
     //         Name         Defend Body Mind
-    BARBARIAN( "Barbarian", 2,     8,   1 ),
-    WIZARD(    "Wizard",    2,     4,   1 ),
-    DWARF(     "Dwarf",     2,     7,   1 ),
-    ELF(       "Elf",       2,     6,   1 );
+    BARBARIAN( "Barbarian", 2,     8,   2 ),
+    WIZARD(    "Wizard",    2,     4,   6 ),
+    DWARF(     "Dwarf",     2,     7,   3 ),
+    ELF(       "Elf",       2,     6,   4 );
 
     private String _name;
     private int _defend;
