@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.stream.*;
 
 import heroquest.util.Util;
+import heroquest.util.Logger;
 import heroquest.monster.Monster;
 import heroquest.treasure.Treasure;
 import heroquest.furniture.Furniture;
@@ -20,6 +21,8 @@ public abstract class Quest
 
     public static final int MIN_ROOM = 1;
     public static final int MAX_ROOM = 22;
+
+    private Logger _logger = Logger.getLogger( Quest.class );
 
     protected int _number;
     protected String _name;
@@ -205,7 +208,7 @@ public abstract class Quest
         List<Cell> cells = new ArrayList<>();
         for( Cell cell: _board )
         {
-            if( cell.getX() >= minX && cell.getX() <= maxY && cell.getY() >= minY && cell.getY() <= maxY )
+            if( cell.getX() >= minX && cell.getX() <= maxX && cell.getY() >= minY && cell.getY() <= maxY )
             {
                 cells.add( cell );
             }

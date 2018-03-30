@@ -24,5 +24,7 @@ public class Game
 
     public Quest getQuest(){ return _quest; }
     public void setQuest( Quest q ){ _quest = q; }
+
+    public List<Hero> getHeroes(){ return _heros; }
 }
 

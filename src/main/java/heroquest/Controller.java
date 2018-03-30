@@ -3,6 +3,7 @@ package heroquest;
 import heroquest.game.Game;
 import heroquest.view.View;
 import heroquest.quest.QuestFactory;
+import heroquest.quest.TestQuest;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -21,7 +22,7 @@ public class Controller
             public void actionPerformed( ActionEvent e )
             {
                 Game game = new Game();
-                game.setQuest( QuestFactory.createQuest( 1 ) );
+                game.setQuest( new TestQuest() ); //QuestFactory.createQuest( 1 ) );
                 _model.setGame( game );
                 _view.showGame();
                 _view.getGamePanel().displayQuestDescription();

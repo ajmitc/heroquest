@@ -7,11 +7,6 @@ import heroquest.item.Item;
 
 public class Hero
 {
-    public static final String BARBARIAN_INFO_IMAGE = "MGBHeroBarbarian.gif";
-    public static final String WIZARD_INFO_IMAGE    = "MGBHeroWizard.gif";
-    public static final String DWARF_INFO_IMAGE     = "MGBHeroDwarf.gif";
-    public static final String ELF_INFO_IMAGE       = "MGBHeroElf.gif";
-
     private HeroType _type;
     private String _name;
     private int _attackModifier;

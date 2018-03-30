@@ -3,6 +3,8 @@ package heroquest.quest;
 import heroquest.monster.Monster;
 import heroquest.furniture.Furniture;
 import heroquest.trap.Trap;
+import heroquest.hero.Hero;
+import heroquest.util.Logger;
 
 public class Cell
 {
@@ -21,15 +23,20 @@ public class Cell
     // Room Number
     public static final int HALLWAY = 0;
 
+    private Logger _logger = Logger.getLogger( Cell.class );
+
     private int _x, _y;
     private Monster _monster;
     private Furniture _furniture;
     private Trap _trap;
+    private Hero _hero;
     private boolean _solidRock;
 
     private int[] _walls;
     private int _room; // 0 = hallway
     private boolean _stairs;
+
+    private boolean _hidden;
     
     public Cell()
     {
@@ -37,10 +44,12 @@ public class Cell
         _monster = null;
         _furniture = null;
         _trap = null;
+        _hero = null;
         _solidRock = false;
         _walls = new int[]{ OPEN, OPEN, OPEN, OPEN };
         _room = HALLWAY;
         _stairs = false;
+        _hidden = true;
     }
 
     public Cell( int x, int y )
@@ -55,18 +64,22 @@ public class Cell
     public Monster getMonster(){ return _monster; }
     public Furniture getFurniture(){ return _furniture; }
     public Trap getTrap(){ return _trap; }
+    public Hero getHero(){ return _hero; }
     public boolean isSolidRock(){ return _solidRock; }
     public int getWall( int index ){ return _walls[ index ]; }
     public int getRoom(){ return _room; }
     public boolean isStairs(){ return _stairs; }
+    public boolean isHidden(){ return _hidden; }
 
     public void setLocation( int x, int y ){ _x = x; _y = y; }
     public void setMonster( Monster m ){ _monster = m; }
     public void setFurniture( Furniture f ){ _furniture = f; }
     public void setTrap( Trap t ){ _trap = t; }
-    public void setSolidRock( boolean v ){ _solidRock = v; }
+    public void setHero( Hero h ){ _hero = h; }
+    public void setSolidRock( boolean v ){ _logger.info( "Setting [" + _x + ", " + _y + "] to solid rock" ); _solidRock = v; }
     public void setWall( int index, int v ){ _walls[ index ] = v; }
     public void setRoom( int num ){ _room = num; }
     public void setStairs( boolean v ){ _stairs = v; }
+    public void setHidden( boolean v ){ _hidden = v; }
 }
 

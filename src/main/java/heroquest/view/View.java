@@ -39,7 +39,7 @@ public class View
 
     public void showGame()
     {
-        _frame.setSize( Util.getScreenSize() );
+        //_frame.setSize( Util.getScreenSize() );
         showCard( GAMEPANEL );
     }
 
