@@ -2,13 +2,13 @@ package heroquest.hero;
 
 public enum WeaponType
 {
-    DAGGER( "Dagger", 1, 1, 100 ),
+    DAGGER( "Dagger", 1, 1, 25 ),
     STAFF( "Staff", 1, 1, 1, true ),
     SHORTSWORD( "Shortsword", 2, 1, 1 ),
     BROADSWORD( "Broadsword", 3, 1, 1 ),
     LONGSWORD( "Longsword", 3, 1, 1, true ),
     BATTLEAXE( "Battleaxe", 4, 1, 1 ),
-    CROSSBOW( "Crossbow", 3, 2, 100, true ),
+    CROSSBOW( "Crossbow", 3, 2, 25, true ),
     // Use this WeaponType for any special weapons found on Artifact cards
     ARTIFACT( "Artifact", 0, 0, 0 );
 
@@ -38,6 +38,6 @@ public enum WeaponType
     public int getMaxRange(){ return _maxRange; }
     public boolean allowDiagonalAttack(){ return _diagonalAttack; }
 
-    public String toString(){ return _name + "[" + _attack + "/" + _minRange + "-" + _maxRange + (_diagonalAttack? "/diagonal": "") + "]"; }
+    public String toString(){ return _name + " [A:" + _attack + " R:" + _minRange + "-" + _maxRange + (_diagonalAttack? " DIAG": "") + "]"; }
 }
 

@@ -76,7 +76,7 @@ public class Cell
     public void setFurniture( Furniture f ){ _furniture = f; }
     public void setTrap( Trap t ){ _trap = t; }
     public void setHero( Hero h ){ _hero = h; }
-    public void setSolidRock( boolean v ){ _logger.info( "Setting [" + _x + ", " + _y + "] to solid rock" ); _solidRock = v; }
+    public void setSolidRock( boolean v ){ _solidRock = v; }
     public void setWall( int index, int v ){ _walls[ index ] = v; }
     public void setRoom( int num ){ _room = num; }
     public void setStairs( boolean v ){ _stairs = v; }

@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import heroquest.Model;
 import heroquest.game.*;
@@ -23,16 +24,28 @@ public class GamePanel extends JPanel
     public static final String CLOSED_DOOR_IMAGE = "MGFurDoor.gif";
     public static final String OPEN_DOOR_IMAGE   = "MGFurOpenDoor.gif";
     public static final String WALL_IMAGE        = "MGTileWallSingle.gif";
+    public static final String MASK_IMAGE        = "mask.gif";
 
-    private static final Color SOLID_ROCK_COLOR = Color.BLACK;
+    private static final Color HIDDEN_COLOR = new Color( 0, 0, 0, 200 );
 
-    private static final int XOFFSET = 17;
+    private static final int XOFFSET = 18;
     private static final int YOFFSET = 10;
     private static final int CELL_SIZE = 50;
+    private static final int WALL_SIZE = 5;
+    private static final int BOARD_WIDTH  = 1358;
+    private static final int BOARD_HEIGHT = 1089;
+    private static final int HERO_PANEL_XOFFSET = BOARD_WIDTH;
+    private static final int HERO_PANEL_YOFFSET = 0;
+    private static final int HERO_PANEL_WIDTH = 200;
+    private static final int HERO_PANEL_HEIGHT = 250;
 
     private Logger _logger = Logger.getLogger( GamePanel.class );
     private Model _model;
     private BufferedImage _boardImage;
+
+    private List<HeroPanel> _heroPanels;
+
+    private boolean _displayQuestDescription;
 
     public GamePanel( Model model )
     {
@@ -44,27 +57,49 @@ public class GamePanel extends JPanel
         ImageStore.getInstance().get( CLOSED_DOOR_IMAGE );
         ImageStore.getInstance().get( OPEN_DOOR_IMAGE );
         ImageStore.getInstance().get( WALL_IMAGE );
+        ImageStore.getInstance().get( MASK_IMAGE );
+
+        _heroPanels = null;
+        _displayQuestDescription = false;
     }
 
 
-    public void displayQuestDescription()
+    public void setDisplayQuestDescription( boolean v )
     {
+        _displayQuestDescription = v;
+    }
 
+    public boolean isDisplayQuestDescription()
+    {
+        return _displayQuestDescription;
     }
 
     public void paintComponent( Graphics gfx )
     {
+        Game game = _model.getGame();
+        if( game == null )
+            return;
+
         Graphics2D g = (Graphics2D) gfx;
 
         // Draw main board
         g.drawImage( _boardImage, 0, 0, null );
 
-        Game game = _model.getGame();
-        if( game == null )
-            return;
-
         List<Hero> heroes = game.getHeroes();
-        // TODO Draw Hero Panels
+        // Draw Hero Panels
+        if( _heroPanels == null )
+        {
+            _heroPanels = new ArrayList<>();
+            for( Hero hero: _model.getGame().getHeroes() )
+            {
+                _heroPanels.add( new HeroPanel( _model, hero ) );
+            }
+        }
+        for( int i = 0; i < _heroPanels.size(); ++i )
+        {
+            HeroPanel heroPanel = _heroPanels.get( i );
+            heroPanel.paintComponent( g, HERO_PANEL_XOFFSET, HERO_PANEL_YOFFSET + (i * HERO_PANEL_HEIGHT) );
+        }
         
         Quest quest = game.getQuest();
         if( quest == null )
@@ -74,8 +109,25 @@ public class GamePanel extends JPanel
         List<Cell> board = quest.getBoard();
         for( Cell cell: board )
         {
-            int px = XOFFSET + (cell.getX() * CELL_SIZE);
-            int py = YOFFSET + (cell.getY() * CELL_SIZE);
+            //int px = XOFFSET + (cell.getX() * CELL_SIZE) + (quest.countWallsHorizontal( cell.getX(), cell.getY() ) * WALL_SIZE);
+            //int py = YOFFSET + (cell.getY() * CELL_SIZE) + (quest.countWallsVertical(   cell.getX(), cell.getY() ) * WALL_SIZE);
+            int px = XOFFSET + (cell.getX() * CELL_SIZE) + cell.getX();
+            int py = YOFFSET + (cell.getY() * CELL_SIZE) + cell.getY();
+
+            if( cell.isHidden() )
+            {
+                g.setColor( HIDDEN_COLOR );
+                g.fillRect( px, py, CELL_SIZE, CELL_SIZE );
+            }
+        }
+
+        for( Cell cell: board )
+        {
+            if( cell.isHidden() )
+                continue;
+
+            int px = XOFFSET + (cell.getX() * CELL_SIZE) + cell.getX();
+            int py = YOFFSET + (cell.getY() * CELL_SIZE) + cell.getY();
 
             if( cell.isSolidRock() ) //|| cell.isHidden() )
             {
@@ -84,20 +136,12 @@ public class GamePanel extends JPanel
                 //g.fillRect( px, py, CELL_SIZE, CELL_SIZE );
                 BufferedImage img = ImageStore.getInstance().get( WALL_IMAGE );
                 g.drawImage( img, px, py, null );
+                //g.setColor( Color.WHITE );
+                //g.drawString( "[" + cell.getX() + ", " + cell.getY() + "]", px, py + (CELL_SIZE / 2) );
                 continue;
             }
 
-            if( cell.getMonster() != null )
-            {
-                BufferedImage img = ImageStore.getInstance().get( cell.getMonster().getIconName() );
-                g.drawImage( img, px, py, null );
-            }
-            else if( cell.getFurniture() != null )
-            {
-                BufferedImage img = ImageStore.getInstance().get( cell.getFurniture().getType().getImgFilename() );
-                g.drawImage( img, px, py, null );
-            }
-            else if( cell.getTrap() != null )
+            if( cell.getTrap() != null )
             {
                 if( !cell.getTrap().isHidden() )
                 {
@@ -109,9 +153,26 @@ public class GamePanel extends JPanel
                     // What to do?
                 }
             }
-            else if( cell.getHero() != null )
+
+            if( cell.getFurniture() != null )
             {
-                BufferedImage img = ImageStore.getInstance().get( cell.getHero().getType().getIconName() );
+                BufferedImage img = ImageStore.getInstance().get( cell.getFurniture().getType().getImgFilename() );
+                g.drawImage( img, px, py, null );
+            }
+
+            if( cell.getMonster() != null )
+            {
+                BufferedImage img = ImageStore.getInstance().get( MASK_IMAGE );
+                g.drawImage( img, px, py, null );
+                img = ImageStore.getInstance().get( cell.getMonster().getIconName() );
+                g.drawImage( img, px, py, null );
+            }
+
+            if( cell.getHero() != null )
+            {
+                BufferedImage img = ImageStore.getInstance().get( MASK_IMAGE );
+                g.drawImage( img, px, py, null );
+                img = ImageStore.getInstance().get( cell.getHero().getType().getIconName() );
                 g.drawImage( img, px, py, null );
             }
 
@@ -152,6 +213,11 @@ public class GamePanel extends JPanel
                     g.drawImage( img, dpx, dpy, null );
                 }
             }
+        }
+
+        if( _displayQuestDescription )
+        {
+            QuestDescriptionDrawer.draw( quest, this, g );
         }
     }
 }

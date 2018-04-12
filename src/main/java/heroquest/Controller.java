@@ -7,6 +7,8 @@ import heroquest.quest.TestQuest;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Controller
 {
@@ -22,10 +24,11 @@ public class Controller
             public void actionPerformed( ActionEvent e )
             {
                 Game game = new Game();
-                game.setQuest( new TestQuest() ); //QuestFactory.createQuest( 1 ) );
+                game.setQuest( QuestFactory.createQuest( 1 ) );
                 _model.setGame( game );
+                game.placeHeroes();
                 _view.showGame();
-                _view.getGamePanel().displayQuestDescription();
+                _view.getGamePanel().setDisplayQuestDescription( true );
             }
         });
 
@@ -33,6 +36,17 @@ public class Controller
             public void actionPerformed( ActionEvent e )
             {
                 System.exit( 0 );
+            }
+        });
+
+        _view.getGamePanel().addMouseListener( new MouseAdapter(){
+            public void mouseClicked( MouseEvent e )
+            {
+                if( _view.getGamePanel().isDisplayQuestDescription() )
+                {
+                    _view.getGamePanel().setDisplayQuestDescription( false );
+                    _view.refresh();
+                }
             }
         });
     }

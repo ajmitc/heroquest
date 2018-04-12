@@ -39,8 +39,13 @@ public class View
 
     public void showGame()
     {
-        //_frame.setSize( Util.getScreenSize() );
+        _frame.setSize( Util.getScreenSize() );
         showCard( GAMEPANEL );
+    }
+
+    public void refresh()
+    {
+        _gamePanel.repaint();
     }
 
     private void showCard( String name )

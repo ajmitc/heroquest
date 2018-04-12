@@ -297,6 +297,46 @@ public class Util
         return (dir + 2) % 4;
     }
 
+
+    public static void drawWrappedString( String s, Graphics2D g, int x, int y, int maxWidth )
+    {
+        int stringWidth  = getStringWidth( g, s );
+        int stringHeight = getStringHeight( g, s );
+
+        if( stringWidth < maxWidth )
+        {
+            g.drawString( s, x, y );
+            return;
+        }
+
+        // break string wrapping on a word
+        double perc = maxWidth / stringWidth;
+        int numChars = (int) (s.length() * perc);
+
+        StringBuilder sentence = new StringBuilder();
+        String[] words = s.split( " " );
+        for( String word: words )
+        {
+            if( sentence.length() + word.length() < numChars )
+            {
+                sentence.append( word );
+                sentence.append( " " );
+            }
+            else
+            {
+                g.drawString( sentence.toString(), x, y );
+                y += stringHeight;
+                sentence = new StringBuilder();
+            }
+        }
+
+        if( sentence.length() > 0 )
+        {
+            g.drawString( sentence.toString(), x, y );
+        }
+    }
+
+
     private Util(){}
 }
 

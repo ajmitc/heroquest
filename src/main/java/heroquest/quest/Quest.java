@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.stream.*;
 
 import heroquest.util.Util;
@@ -283,12 +285,92 @@ public abstract class Quest
     }
 
 
+    public int countWallsHorizontal( int x, int y )
+    {
+        List<Cell> cells = getCells( 0, x, y, y );
+        Collections.sort( cells, new Comparator<Cell>(){
+            public int compare( Cell c1, Cell c2 )
+            {
+                return (c1.getY() < c2.getY()? -1: (c1.getY() > c2.getY()? 1: 0));
+            }
+
+            public boolean equals( Object o )
+            {
+                return false;
+            }
+        });
+        int count = 0;
+        int lastRoom = 0;
+        for( Cell cell: cells )
+        {
+            if( cell.getRoom() != lastRoom )
+            {
+                ++count;
+                lastRoom = cell.getRoom();
+            }
+        }
+        return count;
+    }
+
+
+    public int countWallsVertical( int x, int y )
+    {
+        List<Cell> cells = getCells( x, x, 0, y );
+        Collections.sort( cells, new Comparator<Cell>(){
+            public int compare( Cell c1, Cell c2 )
+            {
+                return (c1.getX() < c2.getX()? -1: (c1.getX() > c2.getX()? 1: 0));
+            }
+
+            public boolean equals( Object o )
+            {
+                return false;
+            }
+        });
+        int count = 0;
+        int lastRoom = 0;
+        for( Cell cell: cells )
+        {
+            if( cell.getRoom() != lastRoom )
+            {
+                ++count;
+                lastRoom = cell.getRoom();
+            }
+        }
+        return count;
+    }
+
+
+    /**
+     * Unhide the cells in the given room
+     */
+    public void showRoom( int room )
+    {
+        getRoomCells( room ).stream().forEach( cell -> cell.setHidden( false ) );
+    }
+
+
+    /**
+     * Unhide the cells in the given room
+     */
+    public void showCells( int minX, int maxX, int minY, int maxY )
+    {
+        getCells( minX, maxX, minY, maxY ).stream().forEach( cell -> cell.setHidden( false ) );
+    }
+
+
+    public List<Cell> getStairCells()
+    {
+        return getBoard().stream().filter( cell -> cell.isStairs() ).collect( Collectors.toList() );
+    }
+
     public void setStairsAt( int room, int dx, int dy )
     {
         Cell c = getCellAtOffsetInRoom( room, dx, dy );
         c.setFurniture( FurnitureFactory.create( FurnitureType.STAIRS ) );
         for( Cell cell: getCellsAtOffsetInRoom( room, dx, dx + 1, dy, dy + 1 ) )
             cell.setStairs( true );
+        showRoom( room );
     }
 
 
@@ -310,9 +392,11 @@ public abstract class Quest
         cell.setWall( dir, type );
         // get the opposite cell and set the wall there too
         int oppdir = Util.oppositeDir( dir );
-        Cell opp = getCellInDir( cell, oppdir );
+        Cell opp = getCellInDir( cell, dir );
         if( opp != null )
+        {
             opp.setWall( oppdir, type );
+        }
     }
 
 

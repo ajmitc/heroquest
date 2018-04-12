@@ -52,13 +52,13 @@ public class Quest1 extends Quest
         setStairsAt( r, 0, 0 );
         setClosedDoorAt( r, 2, 3, Cell.DOWN );
 
-        setSolidRock( 0, 1, 0, 1 );
+        setSolidRock( 0, 1 );
         setSolidRock( 0, 0, BOARD_WIDTH - 1, 0 );
-        setSolidRock( 13, 1, BOARD_WIDTH - 1, 4 );
-        setSolidRock( 15, 5, BOARD_WIDTH - 1, 5 );
-        setSolidRock( 18, 6, BOARD_WIDTH - 1, 12 );
-        setSolidRock( 19, 13, BOARD_WIDTH - 1, 17 );
-        setSolidRock( 15, BOARD_HEIGHT - 1, BOARD_WIDTH - 1, BOARD_HEIGHT - 1 );
+        setSolidRock( 12, 1, BOARD_WIDTH - 1, 5 );
+        setSolidRock( 14, 5, BOARD_WIDTH - 1, 5 );
+        setSolidRock( 17, 6, BOARD_WIDTH - 1, 12 );
+        setSolidRock( 18, 13, BOARD_WIDTH - 1, 17 );
+        setSolidRock( 14, BOARD_HEIGHT - 1, BOARD_WIDTH - 1, BOARD_HEIGHT - 1 );
 
         setSolidRockRoom( 13 );
         setSolidRockRoom( 14 );
